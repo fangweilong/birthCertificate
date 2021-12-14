@@ -44,7 +44,23 @@
                                     inactive-text="否"
                                     @change="calculateTotalAmount"></el-switch>
                         </el-tooltip>
-
+                    </el-form-item>
+                    <el-form-item label="是否有物业费抵用券" prop="isOffsetProperty">
+                        <el-tooltip
+                                class="item"
+                                effect="dark"
+                                content="有物业抵用券的选择是，没有的选择否"
+                                placement="right-end"
+                        >
+                            <el-switch
+                                    v-model="isOffsetProperty"
+                                    inline-prompt
+                                    active-color="#13ce66"
+                                    inactive-color="#ff4949"
+                                    active-text="是"
+                                    inactive-text="否"
+                                    @change="calculateTotalAmount"></el-switch>
+                        </el-tooltip>
                     </el-form-item>
                 </el-form>
             </el-card>
@@ -95,7 +111,9 @@
                 //对其方式
                 labelPosition: 'left',
                 //是否交过能源费
-                isEnergyConsumption: true
+                isEnergyConsumption: true,
+                //是否有物业抵用券
+                isOffsetProperty: false
             };
         },
         created(){
