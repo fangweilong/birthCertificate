@@ -1,68 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#000000">
-    <meta name="description" content="Web site created using CloudBase Webify">
-    <title>Hello Webify！</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-                sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        code {
-            font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-                monospace;
-        }
-        .App {
-            text-align: center;
-        }
-
-        .App-logo {
-            height: 40vmin;
-            pointer-events: none;
-        }
-
-        @media (prefers-reduced-motion: no-preference) {
-            .App-logo {
-                animation: App-logo-spin infinite 20s linear;
-            }
-        }
-
-        .App-header {
-            background-color: #efefef;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: calc(10px + 2vmin);
-            color: black;
-        }
-
-        .App-link {
-            color: #108ee9;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <title>办理产证花销</title>
+    <!-- 导入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css"/>
 </head>
-
 <body>
-    <div id="root">
-        <div class="App">
-            <header class="App-header">
-                <img src="https://main.qcloudimg.com/raw/2f3b21706c37e8685efe5c60b26ceb24.png" class="App-logo" alt="logo">
-                <p>Welcome to Webify！</p>
-                <a class="App-link" href="https://webify.cloudbase.net/"
-                    target="_blank" rel="noopener noreferrer">webify.cloudbase.net</a>
-            </header>
-        </div>
-    </div>
-</body>
+<div id="app">
+    <el-row>
+        <el-col :span="12">
+            <el-card style="width:30vw;">
+                <el-form :model="pay" ref="pay" :label-position="labelPosition" label-width="120px">
+                    <el-form-item label="房屋总价" prop="totalPrice">
+                        <el-input-number v-model="pay.totalPrice" :step="1"
+                                         @change="calculateTotalAmount"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="总面积" prop="area">
+                        <el-input-number v-model="pay.area" :step="0.1" @change="calculateTotalAmount"/>
+                    </el-form-item>
+                    <el-form-item label="无锡市房屋数量" prop="houseNum">
+                        <el-input-number v-model="pay.houseNum" :min="1" :max="2" @change="calculateTotalAmount"/>
+                    </el-form-item>
+                    <el-form-item label="是否交过能源费" prop="isEnergyConsumption">
+                        <el-tooltip
+                                class="item"
+                                effect="dark"
+                                content="装修办证的时候交的2000押金和装修管理费以外的一笔费用"
+                                placement="right-end"
+                        >
+                            <el-switch
+                                    v-model="isEnergyConsumption"
+                                    inline-prompt
+                                    active-color="#13ce66"
+                                    inactive-color="#ff4949"
+                                    active-text="是"
+                                    inactive-text="否"
+                                    @change="calculateTotalAmount"></el-switch>
+                        </el-tooltip>
 
+                    </el-form-item>
+                </el-form>
+            </el-card>
+        </el-col>
+        <el-col :span="12" header="缴纳金额">
+            <el-card style="width:30vw;">
+                <span>缴纳契税：{{deedTaxTotal}}</span></br>
+                <span>缴纳大修基金：{{repairMoney}}</span></br>
+                <span>缴纳物业费：{{manageMoney}}</span></br></br>
+                <span style="color: red;">准备的金额：{{money}}</span>
+            </el-card>
+        </el-col>
+    </el-row>
+
+
+</div>
+<!-- 导入 Vue 3 -->
+<script src="https://unpkg.com/vue@next"></script>
+<!-- 导入组件库 -->
+<script src="https://unpkg.com/element-plus"></script>
+<script type="text/javascript">
+
+    const App = {
+        data() {
+            return {
+                pay: {
+                    // 房屋总价
+                    totalPrice: 0,
+                    // 总面积
+                    area: 0.0,
+                    // 房屋数量
+                    houseNum: 0
+                },
+                // 管理费
+                manageMoney: 0,
+                // 契税比例
+                taxRate: 0.0,
+                // 物业费每平每月单价
+                propertyUnitPrice: 1.7,
+                // 能耗费每平每月
+                energyConsumptionUnitPrice: 0.6,
+                // 大修基金
+                repairMoney: 0,
+                // 所需契税
+                deedTaxTotal: 0,
+                // 总花费
+                money: 0,
+                //对其方式
+                labelPosition: 'left',
+                //是否交过能源费
+                isEnergyConsumption: true
+            };
+        },
+        created(){
+            this.load()
+        },
+        methods: {
+            calculateTotalAmount() {
+                this.deedTax()
+                this.propertyFee()
+                this.repair();
+                this.money=Number(this.deedTaxTotal)+Number(this.repairMoney)+Number(this.manageMoney);
+            },
+            //契税
+            deedTax() {
+                if (this.area <= 89) {
+                    this.taxRate = 0.01
+                } else {
+                    if (this.pay.houseNum == 1) {
+                        this.taxRate = 0.015
+                    } else {
+                        this.taxRate = 0.02
+                    }
+                }
+                this.deedTaxTotal = Number(((this.pay.totalPrice - Number((this.pay.totalPrice * 0.09).toFixed(2))) * this.taxRate).toFixed(2))
+            },
+            //物业费
+            propertyFee() {
+                if (this.isEnergyConsumption) {
+                    this.manageMoney = this.calculatePropertyFee(this.propertyUnitPrice)
+                } else {
+                    this.manageMoney = this.calculatePropertyFee(this.propertyUnitPrice + this.propertyUnitPrice)
+                }
+
+            },
+            //计算物业费
+            calculatePropertyFee(money) {
+                return this.pay.area * 12 * money
+            },
+            //大修基金
+            repair() {
+                this.repairMoney = this.pay.area * 90;
+            },
+            load(){
+                this.$message({
+                    message: '仅供参考',
+                    type: 'warning',
+                    duration:0,
+                    showClose: true,
+                })
+            }
+
+        }
+    };
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount("#app");
+</script>
+</body>
 </html>
