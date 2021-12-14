@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="renderer" content="webkit">
@@ -10,166 +11,150 @@
     <meta name="format-detection" content="telephone=no">
     <title>办理产证花销</title>
     <!-- 导入样式 -->
-    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
 </head>
+
 <body>
-<div id="app">
-    <el-row>
-        <el-col :span="12">
-            <el-card style="width:30vw;">
-                <el-form :model="pay" ref="pay" :label-position="labelPosition" label-width="120px">
-                    <el-form-item label="房屋总价" prop="totalPrice">
-                        <el-input-number v-model="pay.totalPrice" :step="1"
-                                         @change="calculateTotalAmount"></el-input-number>
-                    </el-form-item>
-                    <el-form-item label="总面积" prop="area">
-                        <el-input-number v-model="pay.area" :step="0.1" @change="calculateTotalAmount"/>
-                    </el-form-item>
-                    <el-form-item label="无锡市房屋数量" prop="houseNum">
-                        <el-input-number v-model="pay.houseNum" :min="1" :max="2" @change="calculateTotalAmount"/>
-                    </el-form-item>
-                    <el-form-item label="是否交过能源费" prop="isEnergyConsumption">
-                        <el-tooltip
-                                class="item"
-                                effect="dark"
-                                content="装修办证的时候交的2000押金和装修管理费以外的一笔费用"
-                                placement="right-end"
-                        >
-                            <el-switch
-                                    v-model="isEnergyConsumption"
-                                    inline-prompt
-                                    active-color="#13ce66"
-                                    inactive-color="#ff4949"
-                                    active-text="是"
-                                    inactive-text="否"
+    <div id="app">
+        <el-row>
+            <el-col :xs="24" :sm="12" :sm="12" :lg="12" :lg="12">
+                <el-card>
+                    <el-form :model="pay" ref="pay" :label-position="labelPosition" label-width="120px">
+                        <el-form-item label="房屋总价" prop="totalPrice">
+                            <el-input-number v-model="pay.totalPrice" :step="1" @change="calculateTotalAmount">
+                            </el-input-number>
+                        </el-form-item>
+                        <el-form-item label="总面积" prop="area">
+                            <el-input-number v-model="pay.area" :step="0.1" @change="calculateTotalAmount" />
+                        </el-form-item>
+                        <el-form-item label="无锡市房屋数量" prop="houseNum">
+                            <el-input-number v-model="pay.houseNum" :min="1" :max="2" @change="calculateTotalAmount" />
+                        </el-form-item>
+                        <el-form-item label="是否交过能源费" prop="isEnergyConsumption">
+                            <el-tooltip class="item" effect="dark" content="装修办证的时候交的2000押金和装修管理费以外的一笔费用"
+                                placement="right-end">
+                                <el-switch v-model="isEnergyConsumption" inline-prompt active-color="#13ce66"
+                                    inactive-color="#ff4949" active-text="是" inactive-text="否"
                                     @change="calculateTotalAmount"></el-switch>
-                        </el-tooltip>
-                    </el-form-item>
-                    <el-form-item label="是否有物业费抵用券" prop="isOffsetProperty">
-                        <el-tooltip
-                                class="item"
-                                effect="dark"
-                                content="有物业抵用券的选择是，没有的选择否"
-                                placement="right-end"
-                        >
-                            <el-switch
-                                    v-model="isOffsetProperty"
-                                    inline-prompt
-                                    active-color="#13ce66"
-                                    inactive-color="#ff4949"
-                                    active-text="是"
-                                    inactive-text="否"
+                            </el-tooltip>
+                        </el-form-item>
+                        <el-form-item label="是否有物业费抵用券" prop="isOffsetProperty">
+                            <el-tooltip class="item" effect="dark" content="有物业抵用券的选择是，没有的选择否" placement="right-end">
+                                <el-switch v-model="isOffsetProperty" inline-prompt active-color="#13ce66"
+                                    inactive-color="#ff4949" active-text="是" inactive-text="否"
                                     @change="calculateTotalAmount"></el-switch>
-                        </el-tooltip>
-                    </el-form-item>
-                </el-form>
-            </el-card>
-        </el-col>
-        <el-col :span="12" header="缴纳金额">
-            <el-card style="width:30vw;">
-                <span>缴纳契税：{{deedTaxTotal}}</span></br>
-                <span>缴纳大修基金：{{repairMoney}}</span></br>
-                <span>缴纳物业费：{{manageMoney}}</span></br></br>
-                <span style="color: red;">准备的金额：{{money}}</span>
-            </el-card>
-        </el-col>
-    </el-row>
+                            </el-tooltip>
+                        </el-form-item>
+                    </el-form>
+                </el-card>
+            </el-col>
+            <el-col :xs="24" :sm="12" :sm="12" :lg="12" :lg="12" header="缴纳金额">
+                <el-card>
+                    <span>缴纳契税：{{deedTaxTotal}}</span></br>
+                    <span>缴纳大修基金：{{repairMoney}}</span></br>
+                    <span>缴纳物业费：{{manageMoney}}</span></br></br>
+                    <span style="color: red;">准备的金额：{{money}}</span>
+                </el-card>
+            </el-col>
+        </el-row>
 
 
-</div>
-<!-- 导入 Vue 3 -->
-<script src="https://unpkg.com/vue@next"></script>
-<!-- 导入组件库 -->
-<script src="https://unpkg.com/element-plus"></script>
-<script type="text/javascript">
+    </div>
+    <!-- 导入 Vue 3 -->
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- 导入组件库 -->
+    <script src="https://unpkg.com/element-plus"></script>
+    <script type="text/javascript">
 
-    const App = {
-        data() {
-            return {
-                pay: {
-                    // 房屋总价
-                    totalPrice: 0,
-                    // 总面积
-                    area: 0.0,
-                    // 房屋数量
-                    houseNum: 0
+        const App = {
+            data() {
+                return {
+                    pay: {
+                        // 房屋总价
+                        totalPrice: 0,
+                        // 总面积
+                        area: 0.0,
+                        // 房屋数量
+                        houseNum: 0
+                    },
+                    // 管理费
+                    manageMoney: 0,
+                    // 契税比例
+                    taxRate: 0.0,
+                    // 物业费每平每月单价
+                    propertyUnitPrice: 1.7,
+                    // 能耗费每平每月
+                    energyConsumptionUnitPrice: 0.6,
+                    // 大修基金
+                    repairMoney: 0,
+                    // 所需契税
+                    deedTaxTotal: 0,
+                    // 总花费
+                    money: 0,
+                    //对其方式
+                    labelPosition: 'left',
+                    //是否交过能源费
+                    isEnergyConsumption: true,
+                    //是否有物业抵用券
+                    isOffsetProperty: false
+                };
+            },
+            created() {
+                this.load()
+            },
+            methods: {
+                calculateTotalAmount() {
+                    this.deedTax()
+                    this.propertyFee()
+                    this.repair();
+                    this.money = Number(this.deedTaxTotal) + Number(this.repairMoney) + Number(this.manageMoney);
                 },
-                // 管理费
-                manageMoney: 0,
-                // 契税比例
-                taxRate: 0.0,
-                // 物业费每平每月单价
-                propertyUnitPrice: 1.7,
-                // 能耗费每平每月
-                energyConsumptionUnitPrice: 0.6,
-                // 大修基金
-                repairMoney: 0,
-                // 所需契税
-                deedTaxTotal: 0,
-                // 总花费
-                money: 0,
-                //对其方式
-                labelPosition: 'left',
-                //是否交过能源费
-                isEnergyConsumption: true,
-                //是否有物业抵用券
-                isOffsetProperty: false
-            };
-        },
-        created(){
-            this.load()
-        },
-        methods: {
-            calculateTotalAmount() {
-                this.deedTax()
-                this.propertyFee()
-                this.repair();
-                this.money=Number(this.deedTaxTotal)+Number(this.repairMoney)+Number(this.manageMoney);
-            },
-            //契税
-            deedTax() {
-                if (this.area <= 89) {
-                    this.taxRate = 0.01
-                } else {
-                    if (this.pay.houseNum == 1) {
-                        this.taxRate = 0.015
+                //契税
+                deedTax() {
+                    if (this.area <= 89) {
+                        this.taxRate = 0.01
                     } else {
-                        this.taxRate = 0.02
+                        if (this.pay.houseNum == 1) {
+                            this.taxRate = 0.015
+                        } else {
+                            this.taxRate = 0.02
+                        }
                     }
-                }
-                this.deedTaxTotal = Number(((this.pay.totalPrice - Number((this.pay.totalPrice * 0.09).toFixed(2))) * this.taxRate).toFixed(2))
-            },
-            //物业费
-            propertyFee() {
-                if (this.isEnergyConsumption) {
-                    this.manageMoney = this.calculatePropertyFee(this.propertyUnitPrice)
-                } else {
-                    this.manageMoney = this.calculatePropertyFee(this.propertyUnitPrice + this.energyConsumptionUnitPrice)
+                    this.deedTaxTotal = Number(((this.pay.totalPrice - Number((this.pay.totalPrice * 0.09).toFixed(2))) * this.taxRate).toFixed(2))
+                },
+                //物业费
+                propertyFee() {
+                    if (!this.isOffsetProperty) {
+                        if (this.isEnergyConsumption) {
+                            this.manageMoney = this.calculatePropertyFee(this.propertyUnitPrice)
+                        } else {
+                            this.manageMoney = this.calculatePropertyFee(this.propertyUnitPrice + this.energyConsumptionUnitPrice)
+                        }
+                    } else {
+                        this.manageMoney = 0;
+                    }
+
+                },
+                //计算物业费
+                calculatePropertyFee(money) {
+                    return this.pay.area * 12 * money
+                },
+                //大修基金
+                repair() {
+                    this.repairMoney = this.pay.area * 90;
+                },
+                load() {
+                    this.$alert('仅供参考', '警告', {
+                        confirmButtonText: 'OK'
+                    })
                 }
 
-            },
-            //计算物业费
-            calculatePropertyFee(money) {
-                return this.pay.area * 12 * money
-            },
-            //大修基金
-            repair() {
-                this.repairMoney = this.pay.area * 90;
-            },
-            load(){
-                this.$message({
-                    message: '仅供参考',
-                    type: 'warning',
-                    duration:0,
-                    showClose: true,
-                })
             }
-
-        }
-    };
-    const app = Vue.createApp(App);
-    app.use(ElementPlus);
-    app.mount("#app");
-</script>
+        };
+        const app = Vue.createApp(App);
+        app.use(ElementPlus);
+        app.mount("#app");
+    </script>
 </body>
+
 </html>
