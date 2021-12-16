@@ -107,7 +107,7 @@
                     this.deedTax()
                     this.propertyFee()
                     this.repair();
-                    this.money = Number(this.deedTaxTotal) + Number(this.repairMoney) + Number(this.manageMoney);
+                    this.money = (Number(this.deedTaxTotal) + Number(this.repairMoney) + Number(this.manageMoney)).toFixed(2);
                 },
                 //契税
                 deedTax() {
@@ -120,7 +120,7 @@
                             this.taxRate = 0.02
                         }
                     }
-                    this.deedTaxTotal = Number(((this.pay.totalPrice - Number((this.pay.totalPrice * 0.09).toFixed(2))) * this.taxRate).toFixed(2))
+                    this.deedTaxTotal = Number((((this.pay.totalPrice/1.09).toFixed(2)) * this.taxRate).toFixed(2))
                 },
                 //物业费
                 propertyFee() {
@@ -137,7 +137,7 @@
                             this.manageMoney = this.calculatePropertyFee(this.energyConsumptionUnitPrice)
                         }
                     }
-
+                    this.manageMoney = Number(this.manageMoney.toFixed(2))
                 },
                 //计算物业费
                 calculatePropertyFee(money) {
