@@ -124,14 +124,18 @@
                 },
                 //物业费
                 propertyFee() {
-                    if (!this.isOffsetProperty) {
+                    if (!this.isOffsetProperty) {//有抵用券
                         if (this.isEnergyConsumption) {
                             this.manageMoney = this.calculatePropertyFee(this.propertyUnitPrice)
                         } else {
                             this.manageMoney = this.calculatePropertyFee(this.propertyUnitPrice + this.energyConsumptionUnitPrice)
                         }
-                    } else {
-                        this.manageMoney = 0;
+                    } else {//没有抵用券
+                        if (this.isEnergyConsumption) {
+                            this.manageMoney = 0;
+                        } else {
+                            this.manageMoney = this.calculatePropertyFee(this.energyConsumptionUnitPrice)
+                        }
                     }
 
                 },
