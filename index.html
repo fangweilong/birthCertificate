@@ -111,7 +111,7 @@
                 },
                 //契税
                 deedTax() {
-                    if (this.area <= 90) {
+                    if (this.pay.area <= 90) {
                         this.taxRate = 0.01
                     } else {
                         if (this.pay.houseNum == 1) {
@@ -120,7 +120,10 @@
                             this.taxRate = 0.02
                         }
                     }
+                    console.log(this.pay.totalPrice)
+                    console.log(this.taxRate)
                     this.deedTaxTotal = Number((((this.pay.totalPrice/1.09).toFixed(2)) * this.taxRate).toFixed(2))
+                    console.log(this.deedTaxTotal)
                 },
                 //物业费
                 propertyFee() {
