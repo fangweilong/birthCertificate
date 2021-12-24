@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <title>办理产证花销</title>
+    <title>产证花销和违约金</title>
     <!-- 导入样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
 </head>
@@ -20,7 +20,7 @@
             <el-col :xs="24" :sm="12" :sm="12" :lg="12" :lg="12">
                 <el-card>
                     <el-form :model="pay" ref="pay" :label-position="labelPosition" label-width="120px">
-                        <el-form-item label="房屋总价" prop="totalPrice">
+                        <el-form-item label="房屋总价(元)" prop="totalPrice">
                             <el-input-number v-model="pay.totalPrice" :step="1" @change="calculateTotalAmount">
                             </el-input-number>
                         </el-form-item>
@@ -48,12 +48,24 @@
                     </el-form>
                 </el-card>
             </el-col>
-            <el-col :xs="24" :sm="12" :sm="12" :lg="12" :lg="12" header="缴纳金额">
-                <el-card>
+            <el-col :xs="24" :sm="6" :sm="6" :lg="6" :lg="6">
+                <el-card header="缴纳金额">
                     <span>缴纳契税：{{deedTaxTotal}}</span></br>
-                    <span>缴纳大修基金：{{repairMoney}}</span></br>
-                    <span>缴纳物业费：{{manageMoney}}</span></br></br>
-                    <span style="color: red;">准备的金额：{{money}}</span>
+                    <el-tooltip class="item" effect="dark" content="计算公式：产证面积 * 90（元）">
+                        <span>缴纳大修基金：{{repairMoney}}</span>
+                    </el-tooltip></br>
+                    <el-tooltip class="item" effect="dark" content="计算公式：产证面积 * 12（个月） * 物业费（2.3/平/月）">
+                        <span>缴纳物业费：{{manageMoney}}</span>
+                    </el-tooltip></br></br>
+                    <span style="color: red;">准备的金额：{{money}}</span></br></br>
+                </el-card>
+            </el-col>
+            <el-col :xs="24" :sm="6" :sm="6" :lg="6" :lg="6">
+                <el-card header="违约金">
+                    <el-tooltip class="item" effect="dark" content="2020年10月31日到2021年08月28日，减去51免赔付天数">
+                        <span>违约天数：{{defaultDays}}</span>
+                    </el-tooltip></br></br>
+                    <span style="color: green;">违约金：{{liquidatedDamagesMoney}}</span>
                 </el-card>
             </el-col>
         </el-row>
@@ -96,7 +108,12 @@
                     //是否交过能源费
                     isEnergyConsumption: true,
                     //是否有物业抵用券
-                    isOffsetProperty: false
+                    isOffsetProperty: false,
+                    //违约天数
+                    defaultDays:251,
+                    //违约金
+                    liquidatedDamagesMoney:0
+
                 };
             },
             created() {
@@ -107,6 +124,8 @@
                     this.deedTax()
                     this.propertyFee()
                     this.repair();
+                    this.liquidatedDamages();
+
                     this.money = (Number(this.deedTaxTotal) + Number(this.repairMoney) + Number(this.manageMoney)).toFixed(2);
                 },
                 //契税
@@ -120,8 +139,6 @@
                             this.taxRate = 0.02
                         }
                     }
-                    console.log(this.pay.totalPrice)
-                    console.log(this.taxRate)
                     this.deedTaxTotal = Number((((this.pay.totalPrice/1.09).toFixed(2)) * this.taxRate).toFixed(2))
                     console.log(this.deedTaxTotal)
                 },
@@ -150,12 +167,15 @@
                 repair() {
                     this.repairMoney = this.pay.area * 90;
                 },
+                  //违约金
+                liquidatedDamages(){
+                    this.liquidatedDamagesMoney = Number((Number((this.pay.totalPrice * 0.0001).toFixed(2)) * this.defaultDays).toFixed(2));
+                },
                 load() {
                     this.$alert('仅供参考', '警告', {
                         confirmButtonText: 'OK'
                     })
                 }
-
             }
         };
         const app = Vue.createApp(App);
