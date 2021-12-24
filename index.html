@@ -63,7 +63,11 @@
             <el-col :xs="24" :sm="6" :sm="6" :lg="6" :lg="6">
                 <el-card header="违约金">
                     <el-tooltip class="item" effect="dark" content="2020年10月31日到2021年08月28日，减去51免赔付天数">
-                        <span>违约天数：{{defaultDays}}</span>
+                       <div>
+                            <span >违约天数：</span>
+                            <el-input-number v-model="defaultDays" :step="1" @change="calculateTotalAmount">
+                            </el-input-number>
+                        </div>
                     </el-tooltip></br></br>
                     <span style="color: green;">违约金：{{liquidatedDamagesMoney}}</span>
                 </el-card>
